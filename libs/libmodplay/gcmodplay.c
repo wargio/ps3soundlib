@@ -6,7 +6,7 @@
 
 #include "gcmodplay.h"
 
-#include <audio/spu_soundlib.h>
+#include <soundlib/spu_soundlib.h>
 #define __SNDLIB_H__
 //#undef __SNDLIB_H__
 
