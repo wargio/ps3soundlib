@@ -36,13 +36,15 @@ LDFLAGS		=	$(MACHDEP) -Wl,-Map,$(notdir $@).map
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lsputhread 
+LIBS	:=	-lsputhread -lc
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
 # include and lib
 #---------------------------------------------------------------------------------
-LIBDIRS	:=
+LIBDIRS	:= $(PORTLIBS)
+
+BIN2S = 	bin2s
 
 #---------------------------------------------------------------------------------
 # no real need to edit anything past this point unless you need to add additional
@@ -102,18 +104,23 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 .PHONY: $(BUILD) clean bin
 
 #---------------------------------------------------------------------------------
-$(BUILD): bin
+$(BUILD): 
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+#	@[ -d lib ] || mkdir -p lib
+#	$(BIN2S) $(TARGET).elf lib/$(TARGET).h lib/$(TARGET).S $(TARGET)_bin
+#	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
+#	@ppu-ar -rcs $(TARGET).a lib/$(TARGET).o
 
 #---------------------------------------------------------------------------------
 bin:
 	@$(MAKE) --no-print-directory -C spu
 
-install: $(OUTPUT).elf
-	@[ -d $(PORTLIBS)/modules ] || mkdir -p $(PORTLIBS)/modules
-	@cp $(PORTLIBS)/include/soundlib/*.h $(PORTLIBS)/modules
-	@cp $< $(PORTLIBS)/modules/$(TARGET)
+install: $(BUILD)
+	@[ -d $(PS3DEV)/portlibs/modules ] || mkdir -p $(PS3DEV)/portlibs/modules
+	@cp $(PS3DEV)/portlibs/ppu/include/soundlib/*.h $(PS3DEV)/portlibs/modules
+	@echo "[CP] portlibs/modules"
+	@cp $(TARGET).elf $(PS3DEV)/portlibs/modules/$(TARGET).elf
 
 #---------------------------------------------------------------------------------
 clean:
