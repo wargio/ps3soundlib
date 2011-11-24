@@ -107,10 +107,6 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 $(BUILD): 
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
-#	@[ -d lib ] || mkdir -p lib
-#	$(BIN2S) $(TARGET).elf lib/$(TARGET).h lib/$(TARGET).S $(TARGET)_bin
-#	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
-#	@ppu-ar -rcs $(TARGET).a lib/$(TARGET).o
 
 #---------------------------------------------------------------------------------
 bin:
@@ -127,7 +123,7 @@ install: $(BUILD)
 clean:
 	@echo clean ...
 	@$(MAKE) --no-print-directory -C spu clean
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self $(DATA)/spu.bin
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self
 
 #---------------------------------------------------------------------------------
 run:
