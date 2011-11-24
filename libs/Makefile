@@ -1,6 +1,7 @@
 .PHONY: all clean
 
 all:
+	@echo "all:"
 	$(MAKE) -C spu_soundlib
 	$(MAKE) -C libogg-1.2.1
 	$(MAKE) -C libmpg123
@@ -9,6 +10,7 @@ all:
 	$(MAKE) -C spu_soundmodule
 
 install:
+	@echo "Install:"
 	$(MAKE) install -C spu_soundlib
 	$(MAKE) install -C libogg-1.2.1
 	$(MAKE) install -C libmpg123

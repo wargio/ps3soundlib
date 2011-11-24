@@ -25,8 +25,8 @@ endif
 #---------------------------------------------------------------------------------
 
 DEPSDIR		 = .
-DEFINCS		:= -I$(BASEDIR) -I$(PSL1GHT)/ppu/include
-INCLUDES	:= $(DEFINCS) 
+DEFINCS		:= -I$(BASEDIR) -I$(PSL1GHT)/ppu/include -I$(PORTLIBS)/include
+INCLUDES	:= $(DEFINCS)  
 
 MACHDEP		:= -DBIGENDIAN 
 CFLAGS		+= -O2 -Wall $(MACHDEP) -fno-strict-aliasing $(INCLUDES) -DPS3SOUNDLIB
