@@ -50,11 +50,11 @@ libmod.a: $(SOUNDMODLIB)
 #---------------------------------------------------------------------------------
 install: libmod.a
 #---------------------------------------------------------------------------------
-	@[ -d $(PSL1GHT)/ppu/include/audio ] || mkdir -p $(PSL1GHT)/ppu/include/audio
+	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  $(notdir $@)"
-	@cp -f  libmod.a $(PSL1GHT)/ppu/lib/
-	@cp -f  modplay.h $(PSL1GHT)/ppu/include/audio
-	@cp -f  gcmodplay.h $(PSL1GHT)/ppu/include/audio
+	@cp -f  libmod.a $(PORTLIBS)/lib/
+	@cp -f  modplay.h $(PORTLIBS)/include/soundlib
+	@cp -f  gcmodplay.h $(PORTLIBS)/include/soundlib
 	@rm -f *.d
 	@rm -f $(SOUNDMODLIB)
 	@rm -f *.a

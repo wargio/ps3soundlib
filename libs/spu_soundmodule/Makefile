@@ -111,9 +111,9 @@ bin:
 	@$(MAKE) --no-print-directory -C spu
 
 install: $(OUTPUT).elf
-	@[ -d $(PSL1GHT)/ppu/modules ] || mkdir -p $(PSL1GHT)/ppu/modules
-	@cp $(PSL1GHT)/ppu/include/audio/*.h $(PSL1GHT)/ppu/modules
-	@cp $< $(PSL1GHT)/ppu/modules/$(TARGET)
+	@[ -d $(PORTLIBS)/modules ] || mkdir -p $(PORTLIBS)/modules
+	@cp $(PORTLIBS)/include/soundlib/*.h $(PORTLIBS)/modules
+	@cp $< $(PORTLIBS)/modules/$(TARGET)
 
 #---------------------------------------------------------------------------------
 clean:

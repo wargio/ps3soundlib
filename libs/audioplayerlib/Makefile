@@ -63,13 +63,13 @@ liboggplayer.a: $(OGGPLAYERLIB)
 #---------------------------------------------------------------------------------
 install: libaudioplayer.a liboggplayer.a
 #---------------------------------------------------------------------------------
-	@[ -d $(PSL1GHT)/ppu/include/audio ] || mkdir -p $(PSL1GHT)/ppu/include/audio
+	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  libaudioplayer.a"
-	@cp -f libaudioplayer.a $(PSL1GHT)/ppu/lib/
-	@cp -f audioplayer.h $(PSL1GHT)/ppu/include/audio
+	@cp -f libaudioplayer.a $(PORTLIBS)/lib/
+	@cp -f audioplayer.h $(PORTLIBS)/include/soundlib
 	@echo "[CP]  liboggplayer.a"
-	@cp -f liboggplayer.a $(PSL1GHT)/ppu/lib/
-	@cp -f audioplayer.h $(PSL1GHT)/ppu/include/audio
+	@cp -f liboggplayer.a $(PORTLIBS)/lib/
+	@cp -f audioplayer.h $(PORTLIBS)/include/soundlib
 	@rm -f *.d .d
 	@rm -f $(OGGPLAYERLIB)
 	@rm -f audioplayer.o

@@ -49,15 +49,15 @@ libogg.a: $(LIBOGG)
 install: libogg.a 
 #---------------------------------------------------------------------------------
 	@echo "[CP]  libogg.a"
-	@cp -f libogg.a $(PSL1GHT)/ppu/lib/
+	@cp -f libogg.a $(PORTLIBS)/lib/
 	@echo "[MKDIR] include/ogg"
-	@mkdir -p  $(PSL1GHT)/ppu/include/ogg
+	@mkdir -p  $(PORTLIBS)/include/ogg
 	@echo "[CP]  include/ogg"
-	@cp -f ogg/*.h $(PSL1GHT)/ppu/include/ogg/
+	@cp -f ogg/*.h $(PORTLIBS)/include/ogg/
 	@echo "[MKDIR] include/vorbis"
-	@mkdir -p  $(PSL1GHT)/ppu/include/vorbis
+	@mkdir -p  $(PORTLIBS)/include/vorbis
 	@echo "[CP]  include/vorbis"
-	@cp -f vorbis/*.h $(PSL1GHT)/ppu/include/vorbis/
+	@cp -f vorbis/*.h $(PORTLIBS)/include/vorbis/
 	@rm -f *.d
 	@rm -f *.o
 	@rm -f *.a

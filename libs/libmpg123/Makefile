@@ -44,11 +44,11 @@ libmpg123.a: $(MPG123LIB)
 #---------------------------------------------------------------------------------
 install: libmpg123.a
 #---------------------------------------------------------------------------------
-	@[ -d $(PSL1GHT)/ppu/include/audio ] || mkdir -p $(PSL1GHT)/ppu/include/audio
+	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  libmpg123.a"
-	@cp -f libmpg123.a $(PSL1GHT)/ppu/lib/
+	@cp -f libmpg123.a $(PORTLIBS)/lib/
 	@echo "[CP]  include"
-	@cp -f mpg123.h $(PSL1GHT)/ppu/include/audio
+	@cp -f mpg123.h $(PORTLIBS)/include/soundlib
 	@rm -f *.d
 	@rm -f *.o
 	@rm -f *.a
