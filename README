@@ -53,7 +53,7 @@ Building
 
 You need the environment variable $PSL1GHT defined
 
-    cd ps3soundlib/libs
+    cd ps3soundlib
     make
     
 It makes and install SPU module, libs and includes
