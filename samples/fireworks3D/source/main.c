@@ -17,16 +17,17 @@
 */
 
 
-#include <psl1ght/lv2.h>
-#include <psl1ght/lv2/spu.h>
+#include <ppu-lv2.h>
+#include <sys/spu.h>
 #include <lv2/spu.h>
 
 #include <lv2/process.h>
-#include <psl1ght/lv2/timer.h>
-#include <psl1ght/lv2/thread.h>
+#include <sys/systime.h>
+#include <lv2/thread.h>
+#include <lv2/sysfs.h>
 #include <sysmodule/sysmodule.h>
 
-#include <sysutil/events.h>
+#include <sysutil/sysutil.h>
 
 #include <io/pad.h>
 
@@ -48,7 +49,7 @@
 //#define FROM_FILE
 
 #ifndef FROM_FILE
-#include "spu_soundmodule.bin.h" // load SPU Module
+#include "spu_soundmodule_bin.h" // load SPU Module
 #else
 void * spu_soundmodule_bin = NULL;
 #endif
@@ -56,9 +57,9 @@ void * spu_soundmodule_bin = NULL;
 #include "spu_soundlib.h"
 #include "audioplayer.h"
 
-#include "m2003_mp3.bin.h"
-#include "effect_mp3.bin.h"
-#include "sound_ogg.bin.h"
+#include "m2003_mp3_bin.h"
+#include "effect_mp3_bin.h"
+#include "sound_ogg_bin.h"
 
 float text_x = 0.0f; // text X position for DrawFormatString()
 float text_y = 0.0f; // text Y position for DrawFormatString()
@@ -69,9 +70,10 @@ sysSpuImage spu_image;
 
 #define SPU_SIZE(x) (((x)+127) & ~127)
 
-PadInfo padinfo;
-PadData paddata;
+padInfo padinfo;
+padData paddata;
 
+typedef s32 sysFsFile;
 
 u32 inited;
 
@@ -83,7 +85,7 @@ u32 inited;
 void release_all() {
     
 	if(inited & INITED_CALLBACK)
-        sysUnregisterCallback(EVENT_SLOT0);
+        sysUtilUnregisterCallback(SYSUTIL_EVENT_SLOT0);
 
 	if(inited & INITED_AUDIOPLAYER)
         StopAudio();
@@ -98,7 +100,7 @@ void release_all() {
         DrawFormatString(0, 0, "Destroying SPU... ");
         tiny3d_Flip();
         sleep(1);
-	    lv2SpuRawDestroy(spu);
+	    sysSpuRawDestroy(spu);
 	    sysSpuImageClose(&spu_image);
     }
 
@@ -109,7 +111,7 @@ void release_all() {
 static void sys_callback(uint64_t status, uint64_t param, void* userdata) {
 
      switch (status) {
-		case EVENT_REQUEST_EXITAPP:
+		case SYSUTIL_EXIT_GAME:
 				
 			release_all();
 			sysProcessExit(1);
@@ -164,7 +166,7 @@ void demo()
     float f;
 
     int current_file_audio=-1;
-    Lv2FsFile dir;
+    sysFsFile dir;
 
     char *string1;
     char first_str[]          = "Playing MP3 from Memory";
@@ -199,7 +201,7 @@ void demo()
 
     // decode the mp3 effect file included to memory. It stops by EOF or when samples exceed size_effects_samples
 
-    DecodeAudio( (void *) effect_mp3_bin, sizeof(effect_mp3_bin), effect_samples, &effect_size_samples, &effect_freq, &effect_is_stereo);
+    DecodeAudio( (void *) effect_mp3_bin, effect_mp3_bin_size, effect_samples, &effect_size_samples, &effect_freq, &effect_is_stereo);
 
     // adjust the sound buffer sample correctly to the effect_size_samples
     {
@@ -224,7 +226,7 @@ void demo()
 
     // decode the Ogg sound file included to memory. It stops by EOF or when samples exceed explosion_size
 
-    DecodeAudio( (void *) sound_ogg_bin, sizeof(sound_ogg_bin), explosion, &explosion_size, &explosion_freq, &explosion_is_stereo);
+    DecodeAudio( (void *) sound_ogg_bin, sound_ogg_bin_size, explosion, &explosion_size, &explosion_freq, &explosion_is_stereo);
 
     /* NOTE here "explosion" can be unaligned to the SPU dma and i don´t adjust the buffer
         i asume "explosion_size" is sufficient and not expensive with memory
@@ -250,7 +252,7 @@ void demo()
 
     */
 
-    FILE *fp = (FILE *) mem_open((void *) m2003_mp3_bin, sizeof(m2003_mp3_bin));
+    FILE *fp = (FILE *) mem_open((void *) m2003_mp3_bin, m2003_mp3_bin_size);
    
     /* Play the MP3 using the fp returned by fopen() or mem_open. Note the AUDIO_INFINITE_FLAG to play it continuously */
 
@@ -330,19 +332,19 @@ void demo()
                             
                             play_next_audio:
 
-                            if(current_file_audio < 0 && lv2FsOpenDir("/dev_usb/audio/", &dir) == 0) 
+                            if(current_file_audio < 0 && sysFsOpendir("/dev_usb/audio/", &dir) == 0) 
                                 current_file_audio = 0;
 
                            
                             if(current_file_audio >= 0) {
 
                                 while(1) {
-                                    u64 read = sizeof(Lv2FsDirent);
-                                    Lv2FsDirent entry;
+                                    u64 read = sizeof(sysFSDirent);
+                                    sysFSDirent entry;
 
-                                    if(lv2FsReadDir(dir, &entry, &read)<0 || read <= 0) {
-                                        if(read> sizeof(Lv2FsDirent)) exit(0);
-                                        lv2FsCloseDir(dir);
+                                    if(sysFsReaddir(dir, &entry, &read)<0 || read <= 0) {
+                                        if(read> sizeof(sysFSDirent)) exit(0);
+                                        sysFsClosedir(dir);
                                         current_file_audio = -2;
                                         break;
                                         }
@@ -365,7 +367,7 @@ void demo()
                             
                             // if it fails play the default mp3
                             if(current_file_audio<0) {
-                                FILE *fp = (FILE *) mem_open((void *) m2003_mp3_bin, sizeof(m2003_mp3_bin));
+                                FILE *fp = (FILE *) mem_open((void *) m2003_mp3_bin, m2003_mp3_bin_size);
 
                                 filename[0] = 0;
                                 
@@ -631,7 +633,7 @@ void demo()
           
             tiny3d_Flip();
            
-            sysCheckCallback();
+            sysUtilCheckCallback();
 
             }
     out:
@@ -684,7 +686,7 @@ int main(int argc, const char* argv[])
 	ioPadInit(7);
 
 	// register exit callback
-	if(sysRegisterCallback(EVENT_SLOT0, sys_callback, NULL)==0) inited |= INITED_CALLBACK;
+	if(sysUtilRegisterCallback(SYSUTIL_EVENT_SLOT0, sys_callback, NULL)==0) inited |= INITED_CALLBACK;
 
     // Load texture
 
@@ -722,9 +724,9 @@ int main(int argc, const char* argv[])
     SetFontSize(12, 24);
     SetFontColor(0xffffffff, 0x00000000);
 
-	DrawFormatString(0, text_y, "Initializing SPUs... %08x", lv2SpuInitialize(6, 5)); text_y += 32;
+	DrawFormatString(0, text_y, "Initializing SPUs... %08x", sysSpuInitialize(6, 5)); text_y += 32;
 
-	DrawFormatString(0, text_y, "Initializing raw SPU... %08x", lv2SpuRawCreate(&spu, NULL)); text_y += 32;
+	DrawFormatString(0, text_y, "Initializing raw SPU... %08x", sysSpuRawCreate(&spu, NULL)); text_y += 32;
 
 	DrawFormatString(0, text_y, "Getting ELF information... %08x", 
         sysSpuElfGetInformation(spu_soundmodule_bin, &entry, &segmentcount)); text_y += 32;

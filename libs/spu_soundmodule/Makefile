@@ -107,22 +107,26 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 $(BUILD): 
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@[ -d lib ] || mkdir -p lib
+	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
+	@ppu-ar -rcs $(TARGET).bin.a lib/$(TARGET).o
 
 #---------------------------------------------------------------------------------
-bin:
-	@$(MAKE) --no-print-directory -C spu
 
 install: $(BUILD)
 	@[ -d $(PS3DEV)/portlibs/modules ] || mkdir -p $(PS3DEV)/portlibs/modules
-	@cp $(PS3DEV)/portlibs/ppu/include/soundlib/*.h $(PS3DEV)/portlibs/modules
+	@[ -d $(PS3DEV)/portlibs/modules/include ] || mkdir -p $(PS3DEV)/portlibs/modules/include
+	@[ -d $(PS3DEV)/portlibs/modules/lib ] || mkdir -p $(PS3DEV)/portlibs/modules/lib
+	@cp $(PS3DEV)/portlibs/ppu/include/soundlib/*.h $(PS3DEV)/portlibs/modules/include
 	@echo "[CP] portlibs/modules"
-	@cp $(TARGET).elf $(PS3DEV)/portlibs/modules/$(TARGET).elf
-
-
+	@cp $(TARGET).elf $(PS3DEV)/portlibs/modules/$(TARGET).bin
+	@cp -f lib/../*.a $(PS3DEV)/portlibs/modules/lib
+	@cp -f lib/*.h $(PS3DEV)/portlibs/modules/include
+	
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self $(TARGET).bin.a lib/*.o
 
 #---------------------------------------------------------------------------------
 run:
