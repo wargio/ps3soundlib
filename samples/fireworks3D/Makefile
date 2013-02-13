@@ -119,7 +119,7 @@ $(BUILD):
 #---------------------------------------------------------------------------------
 clean:
 	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self
+	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self $(CURDIR)/$(DATA)/spu_soundmodule.bin
 
 #---------------------------------------------------------------------------------
 run:
