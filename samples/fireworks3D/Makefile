@@ -112,14 +112,20 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 
 #---------------------------------------------------------------------------------
 $(BUILD):
+	@[ -f $(PS3DEV)/portlibs/modules/spu_soundmodule.bin ] || { \
+		echo $(PS3DEV)/portlibs/modules/spu_soundmodule.bin "doesn't exist\n" \
+		     "Please, build first ps3soundlib, then try again" ; exit 1 ; }
+	@[ -f $(PORTLIBS)/lib/libtiny3d.a ] || { \
+		echo $(PORTLIBS)/lib/libtiny3d.a "doesn't exist\n" \
+		     "Please, build first tiny3d, then try again" ; exit 1 ; }
 	@cp $(PS3DEV)/portlibs/modules/spu_soundmodule.bin $(CURDIR)/$(DATA)
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
 #---------------------------------------------------------------------------------
 clean:
-	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self $(CURDIR)/$(DATA)/spu_soundmodule.bin
+	@echo clean fireworks3D ...
+	@rm -fr $(BUILD) *.elf *.self *.pkg
 
 #---------------------------------------------------------------------------------
 run:
