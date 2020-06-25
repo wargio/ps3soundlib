@@ -1,12 +1,14 @@
+#---------------------------------------------------------------------------------
+# Clear the implicit built in rules
+#---------------------------------------------------------------------------------
 .SUFFIXES:
+#---------------------------------------------------------------------------------
+
 ifeq ($(strip $(PSL1GHT)),)
-$(error "PSL1GHT must be set in the environment.")
+$(error "Please set PSL1GHT in your environment. export PSL1GHT=<path>")
 endif
 
-include $(PSL1GHT)/ppu_rules
-
-
-#---------------------------------------------------------------------------------
+include	$(PSL1GHT)/ppu_rules
 
 BUILD		:=	build
 
@@ -14,18 +16,22 @@ BUILD		:=	build
 ifeq ($(strip $(PLATFORM)),)
 #---------------------------------------------------------------------------------
 export BASEDIR		:= $(CURDIR)
-export INCDIR		:= $(BASEDIR)
+export DEPS			:= $(BASEDIR)/deps
+export LIBS			:=	$(BASEDIR)/lib
 
 #---------------------------------------------------------------------------------
 else
 #---------------------------------------------------------------------------------
+
+export LIBDIR		:= $(LIBS)/$(PLATFORM)
+export DEPSDIR		:=	$(DEPS)/$(PLATFORM)
 
 #---------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------
 
 DEPSDIR		 = .
-DEFINCS		:= -I$(BASEDIR) -I$(PSL1GHT)/ppu/include -I../spu_soundlib -I../libmpg123 -I../libogg-1.2.1
+DEFINCS		:= -I$(BASEDIR) -I$(PSL1GHT)/ppu/include  -I$(PORTLIBS)/include -I../spu_soundlib -I../libmpg123 -I../libogg-1.2.1
 INCLUDES	:= $(DEFINCS) 
 
 MACHDEP		:= -DBIGENDIAN 
@@ -63,13 +69,12 @@ liboggplayer.a: $(OGGPLAYERLIB)
 #---------------------------------------------------------------------------------
 install: libaudioplayer.a liboggplayer.a
 #---------------------------------------------------------------------------------
-	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  libaudioplayer.a"
 	@cp -f libaudioplayer.a $(PORTLIBS)/lib/
-	@cp -f audioplayer.h $(PORTLIBS)/include/soundlib
+	@cp -f audioplayer.h $(PORTLIBS)/include/
 	@echo "[CP]  liboggplayer.a"
 	@cp -f liboggplayer.a $(PORTLIBS)/lib/
-	@cp -f audioplayer.h $(PORTLIBS)/include/soundlib
+	@cp -f audioplayer.h $(PORTLIBS)/include/
 	@rm -f *.d .d
 	@rm -f $(OGGPLAYERLIB)
 	@rm -f audioplayer.o

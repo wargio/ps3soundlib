@@ -1,11 +1,14 @@
+#---------------------------------------------------------------------------------
+# Clear the implicit built in rules
+#---------------------------------------------------------------------------------
 .SUFFIXES:
+#---------------------------------------------------------------------------------
+
 ifeq ($(strip $(PSL1GHT)),)
-$(error "PSL1GHT must be set in the environment.")
+$(error "Please set PSL1GHT in your environment. export PSL1GHT=<path>")
 endif
 
-include $(PSL1GHT)/ppu_rules
-
-#---------------------------------------------------------------------------------
+include	$(PSL1GHT)/ppu_rules
 
 BUILD		:=	build
 
@@ -13,18 +16,22 @@ BUILD		:=	build
 ifeq ($(strip $(PLATFORM)),)
 #---------------------------------------------------------------------------------
 export BASEDIR		:= $(CURDIR)
-export INCDIR		:= $(BASEDIR)
+export DEPS			:= $(BASEDIR)/deps
+export LIBS			:=	$(BASEDIR)/lib
 
 #---------------------------------------------------------------------------------
 else
 #---------------------------------------------------------------------------------
+
+export LIBDIR		:= $(LIBS)/$(PLATFORM)
+export DEPSDIR		:=	$(DEPS)/$(PLATFORM)
 
 #---------------------------------------------------------------------------------
 endif
 #---------------------------------------------------------------------------------
 
 DEPSDIR		 = .
-DEFINCS		:= -I. -I$(BASEDIR) -I$(PSL1GHT)/ppu/include
+DEFINCS		:= -I. -I$(BASEDIR) -I$(PORTLIBS)/include
 INCLUDES	:= $(DEFINCS)
 
 MACHDEP		:= -DBIGENDIAN
@@ -44,11 +51,10 @@ libmpg123.a: $(MPG123LIB)
 #---------------------------------------------------------------------------------
 install: libmpg123.a
 #---------------------------------------------------------------------------------
-	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  libmpg123.a"
 	@cp -f libmpg123.a $(PORTLIBS)/lib/
 	@echo "[CP]  include"
-	@cp -f mpg123.h $(PORTLIBS)/include/soundlib
+	@cp -f mpg123.h $(PORTLIBS)/include/
 	@rm -f *.d
 	@rm -f *.o
 	@rm -f *.a
