@@ -19,7 +19,7 @@
 
 #include "audioplayer.h"
 
-#include "vorbis/vorbisfile.h"
+#include <vorbis/vorbisfile.h>
 
 #ifdef USE_MP3
 #include "mpg123.h"
