@@ -14,7 +14,6 @@ install:
 	$(MAKE) install -C libmpg123
 	$(MAKE) install -C audioplayerlib
 	$(MAKE) install -C libmodplay
-	$(MAKE) -C spu_soundmodule
 	$(MAKE) install -C spu_soundmodule
 
 clean:

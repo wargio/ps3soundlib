@@ -97,12 +97,11 @@ $(BUILD):
 	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
 	@ppu-ar -rcs $(TARGET).bin.a lib/$(TARGET).o
 
-install: $(OUTPUT).elf
-	
+install: $(BUILD) 
 	@[ -d $(PORTLIBS)/modules ] || mkdir -p $(PORTLIBS)/modules
 	@cp -f lib/*.h $(PORTLIBS)/modules
 	@cp -f lib/../*.a $(PORTLIBS)/modules
-	@cp -f $< $(PORTLIBS)/modules/$(TARGET).bin
+	@cp -f $(TARGET).elf $(PORTLIBS)/modules/$(TARGET).bin
 
 clean:
 	@echo Clean...
