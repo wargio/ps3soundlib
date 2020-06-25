@@ -18,7 +18,8 @@
 
 /* memfile: functions to read the Ogg file from memory */
 
-#include <sys/select.h>
+
+
 #include <unistd.h>
 #include <string.h>
 #include <malloc.h>

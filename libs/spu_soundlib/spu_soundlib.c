@@ -17,8 +17,8 @@
 */
 
 
-#include <lv2/spu.h>
 #include "spu_soundlib.h"
+#include <unistd.h>
 
 #define PRIORITY 501 // High Priority
 
@@ -107,7 +107,7 @@ static u32 send_spu_cmd(u32 cmd, u32 addr)
 }
 
 
-static void thread_sound_start(u64 arg)
+static void thread_sound_start(void * arg)
 {
     int n, update_snd = 0;
    
@@ -280,7 +280,7 @@ int SND_Init(u32 spu)
     mute_on = 1;
 
     // create the control thread
-    sysThreadCreate(&thread_sound_id, (void*)thread_sound_start, 0ULL, PRIORITY, 0x1000, THREAD_JOINABLE, "Control Thread SPU Sound");
+    sysThreadCreate(&thread_sound_id, thread_sound_start, 0ULL, PRIORITY, 0x1000, THREAD_JOINABLE, "Control Thread SPU Sound");
 
     /* info from lousyphreak sample */
 

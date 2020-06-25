@@ -252,14 +252,14 @@ static int check_lame_tag(mpg123_handle *fr)
 					unsigned char lame_vbr;
 					float replay_gain[2] = {0,0};
 					float peak = 0;
-					float gain_offset = 0; /* going to be +6 for old lame that used 83dB */
+					//float gain_offset = 0; /* going to be +6 for old lame that used 83dB */  //var gain_offset not really used
 					char nb[10];
 					memcpy(nb, fr->bsbuf+lame_offset, 9);
 					nb[9] = 0;
 					if(VERBOSE3) fprintf(stderr, "Note: Info: Encoder: %s\n", nb);
 					if(!strncmp("LAME", nb, 4))
 					{
-						gain_offset = 6;
+						//gain_offset = 6;  //var gain_offset not really used
 						debug("TODO: finish lame detetcion...");
 					}
 					lame_offset += 9;

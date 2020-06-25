@@ -1,12 +1,12 @@
 // Modified by Francisco Muñoz 'Hermes' (www.elotrolado.net) MAY 2008
-#include <sys/sem.h>
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 
 #include "gcmodplay.h"
 
-#include <soundlib/spu_soundlib.h>
+#include <spu_soundlib.h>
 #define __SNDLIB_H__
 //#undef __SNDLIB_H__
 

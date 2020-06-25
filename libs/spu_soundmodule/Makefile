@@ -1,159 +1,119 @@
-#---------------------------------------------------------------------------------
-# Clear the implicit built in rules
-#---------------------------------------------------------------------------------
 .SUFFIXES:
-#---------------------------------------------------------------------------------
 ifeq ($(strip $(PSL1GHT)),)
-$(error "Please set PSL1GHT in your environment. export PSL1GHT=<path>")
+$(error "PSL1GHT must be set in the environment.")
 endif
 
-include $(PSL1GHT)/spu_rules
+PREFIX		:= spu-
 
-#---------------------------------------------------------------------------------
-# TARGET is the name of the output
-# BUILD is the directory where object files & intermediate files will be placed
-# SOURCES is a list of directories containing source code
-# INCLUDES is a list of directories containing extra header files
-#---------------------------------------------------------------------------------
+########################################################
+OBJCOPY		:=	$(PREFIX)objcopy
+AR			:=	$(PREFIX)ar
+AS			:=	$(PREFIX)gcc
+CC			:=	$(PREFIX)gcc
+CXX			:=	$(PREFIX)g++
+STRIP		:=	$(PREFIX)strip
+RAW2H		:=	$(PS3DEV)/bin/raw2h
+
+ifeq ($(findstring $(PREFIX),$(LD)),)
+LD			:=	$(CC)
+endif
+
+DEPSOPTIONS	=	-MMD -MP -MF $(DEPSDIR)/$*.d
+
+%.o: %.c
+	@echo "[CC]  $(notdir $<)"
+	@$(CC) $(DEPSOPTIONS) $(CFLAGS) $(INCLUDES) -c $< -o $@
+
+%.o: %.cpp
+	@echo "[CXX] $(notdir $<)"
+	@$(CXX) $(DEPSOPTIONS) $(CXXFLAGS) $(INCLUDES) -c $< -o $@
+
+%.o: %.S
+	@echo "[CC]  $(notdir $<)"
+	@$(AS) $(DEPSOPTIONS) -x assembler-with-cpp $(ASFLAGS) $(INCLUDES) -c $< -o $@
+
+%.a:
+	@echo "[AR]  $(notdir $@)"
+	@$(AR) -rcs $@ $^
+
+%.elf:
+	@echo "[LD]  $(notdir $@)"
+	@$(LD) $^ $(LIBPATHS) $(LIBS) $(LDFLAGS) -o $@
+
+%.bin.h: %.bin
+	@echo "[R2H] $(notdir $<)"
+	@$(RAW2H) $< $(BUILDDIR)/$(notdir $<).h $(BUILDDIR)/$(notdir $<).S $(notdir $(basename $<)_bin)
+	@$(AS) -x assembler-with-cpp $(ASFLAGS) -c $(BUILDDIR)/$(notdir $<).S -o $(BUILDDIR)/$(notdir $<).o
+
+
+########################################################
+
+CFLAGS		:= -g
+CXXFLAGS	:= $(CFLAGS)
+LDFLAGS		:= 
+
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
-SOURCES		:=	source
+SOURCE		:=	source
+INCLUDE		:=	include
 DATA		:=	data
-INCLUDES	:=	include
+LIBS		:=	-lc
 
-TITLE		:=	SPU_SOUNDMODULE
-APPID		:=	SPUSOUND1
-CONTENTID	:=	UP0001-$(APPID)_00-0000000000000000
-#---------------------------------------------------------------------------------
-# options for code generation
-#---------------------------------------------------------------------------------
+PORTLIBS    := $(PS3DEV)/portlibs/ppu
 
-CFLAGS		=	-O2 -Wall --std=gnu99 $(MACHDEP) $(INCLUDE)
-CXXFLAGS	=	$(CFLAGS)
+CFLAGS		:=	-g -O2 -Wall --std=gnu99
+CXXFLAGS	:=	-g -O2 -Wall
+LDFLAGS		:=	
 
-LDFLAGS		=	$(MACHDEP) -Wl,-Map,$(notdir $@).map
-
-#---------------------------------------------------------------------------------
-# any extra libraries we wish to link with the project
-#---------------------------------------------------------------------------------
-LIBS	:=	-lsputhread -lc
-
-#---------------------------------------------------------------------------------
-# list of directories containing libraries, this must be the top level containing
-# include and lib
-#---------------------------------------------------------------------------------
-LIBDIRS	:= $(PORTLIBS)
-
-BIN2S = 	bin2s
-
-#---------------------------------------------------------------------------------
-# no real need to edit anything past this point unless you need to add additional
-# rules for different file extensions
-#---------------------------------------------------------------------------------
 ifneq ($(BUILD),$(notdir $(CURDIR)))
-#---------------------------------------------------------------------------------
 
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
-
-export VPATH	:=	$(foreach dir,$(SOURCES),$(CURDIR)/$(dir)) \
+export VPATH	:=	$(foreach dir,$(SOURCE),$(CURDIR)/$(dir)) \
 					$(foreach dir,$(DATA),$(CURDIR)/$(dir))
-
-export DEPSDIR	:=	$(CURDIR)/$(BUILD)
-
 export BUILDDIR	:=	$(CURDIR)/$(BUILD)
+export DEPSDIR	:=	$(BUILDDIR)
 
-#---------------------------------------------------------------------------------
-# automatically build a list of object files for our project
-#---------------------------------------------------------------------------------
-CFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.c)))
-CPPFILES	:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.cpp)))
-sFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.s)))
-SFILES		:=	$(foreach dir,$(SOURCES),$(notdir $(wildcard $(dir)/*.S)))
-BINFILES	:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.*)))
+CFILES		:= $(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.c)))
+CXXFILES	:= $(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.cpp)))
+SFILES		:= $(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.S)))
+BINFILES	:= $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.bin)))
 
-#---------------------------------------------------------------------------------
-# use CXX for linking C++ projects, CC for standard C
-#---------------------------------------------------------------------------------
-ifeq ($(strip $(CPPFILES)),)
-	export LD	:=	$(CC)
-else
-	export LD	:=	$(CXX)
-endif
-
-export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-					$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
-					$(sFILES:.s=.o) $(SFILES:.S=.o)
+export OFILES	:=	$(CFILES:.c=.o) \
+					$(CXXFILES:.cpp=.o) \
+					$(SFILES:.S=.o)
 
 export BINFILES	:=	$(BINFILES:.bin=.bin.h)
 
-#---------------------------------------------------------------------------------
-# build a list of include paths
-#---------------------------------------------------------------------------------
-export INCLUDE	:=	$(foreach dir,$(INCLUDES), -I$(CURDIR)/$(dir)) \
-					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-					$(LIBPSL1GHT_INC) \
+export INCLUDES	:=	$(foreach dir,$(INCLUDE),-I$(CURDIR)/$(dir)) \
 					-I$(CURDIR)/$(BUILD)
 
-#---------------------------------------------------------------------------------
-# build a list of library paths
-#---------------------------------------------------------------------------------
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
-					$(LIBPSL1GHT_LIB)
+.PHONY: $(BUILD) clean
 
-export OUTPUT	:=	$(CURDIR)/$(TARGET)
-.PHONY: $(BUILD) clean bin
-
-#---------------------------------------------------------------------------------
-$(BUILD): 
+$(BUILD):
 	@[ -d $@ ] || mkdir -p $@
-	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
+	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	@[ -d lib ] || mkdir -p lib
+	@raw2h$(POSTFIX) $(TARGET).elf lib/$(TARGET).bin.h lib/$(TARGET).S $(TARGET)_bin
 	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
 	@ppu-ar -rcs $(TARGET).bin.a lib/$(TARGET).o
 
-#---------------------------------------------------------------------------------
+install: $(BUILD) 
+	@[ -d $(PORTLIBS)/modules ] || mkdir -p $(PORTLIBS)/modules
+	@cp -f lib/*.h $(PORTLIBS)/modules
+	@cp -f lib/../*.a $(PORTLIBS)/modules
+	@cp -f $(TARGET).elf $(PORTLIBS)/modules/$(TARGET).bin
 
-install: $(BUILD)
-	@[ -d $(PS3DEV)/portlibs/modules ] || mkdir -p $(PS3DEV)/portlibs/modules
-	@[ -d $(PS3DEV)/portlibs/modules/include ] || mkdir -p $(PS3DEV)/portlibs/modules/include
-	@[ -d $(PS3DEV)/portlibs/modules/lib ] || mkdir -p $(PS3DEV)/portlibs/modules/lib
-	@cp $(PS3DEV)/portlibs/ppu/include/soundlib/*.h $(PS3DEV)/portlibs/modules/include
-	@echo "[CP] portlibs/modules"
-	@cp $(TARGET).elf $(PS3DEV)/portlibs/modules/$(TARGET).bin
-	@cp -f lib/../*.a $(PS3DEV)/portlibs/modules/lib
-	@cp -f lib/*.h $(PS3DEV)/portlibs/modules/include
-	
-#---------------------------------------------------------------------------------
 clean:
-	@echo clean ...
-	@rm -fr $(BUILD) $(OUTPUT).elf $(OUTPUT).self $(TARGET).bin.a lib/*.o
+	@echo Clean...
+	@rm -rf $(BUILD) $(OUTPUT).elf $(OUTPUT).a $(OUTPUT).bin.a lib
 
-#---------------------------------------------------------------------------------
-run:
-	ps3load $(OUTPUT).self
-
-
-#---------------------------------------------------------------------------------
 else
 
 DEPENDS	:= $(OFILES:.o=.d)
 
-#---------------------------------------------------------------------------------
-# main targets
-#---------------------------------------------------------------------------------
-$(OUTPUT).self: $(OUTPUT).elf
 $(OUTPUT).elf: $(OFILES)
-
-#---------------------------------------------------------------------------------
-# This rule links in binary data with the .bin extension
-#---------------------------------------------------------------------------------
-%.bin.o	:	%.bin
-#---------------------------------------------------------------------------------
-	@echo $(notdir $<)
-	@$(bin2o)
+$(OFILES): $(BINFILES)
 
 -include $(DEPENDS)
 
-#---------------------------------------------------------------------------------
 endif
-#---------------------------------------------------------------------------------

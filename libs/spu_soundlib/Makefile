@@ -1,10 +1,14 @@
+#---------------------------------------------------------------------------------
+# Clear the implicit built in rules
+#---------------------------------------------------------------------------------
 .SUFFIXES:
+#---------------------------------------------------------------------------------
+
 ifeq ($(strip $(PSL1GHT)),)
-$(error "PSL1GHT must be set in the environment.")
+$(error "Please set PSL1GHT in your environment. export PSL1GHT=<path>")
 endif
 
-include $(PSL1GHT)/ppu_rules
-
+include	$(PSL1GHT)/ppu_rules
 
 #---------------------------------------------------------------------------------
 
@@ -14,11 +18,15 @@ BUILD		:=	build
 ifeq ($(strip $(PLATFORM)),)
 #---------------------------------------------------------------------------------
 export BASEDIR		:= $(CURDIR)
-export INCDIR		:= $(BASEDIR)
+export DEPS			:= $(BASEDIR)/deps
+export LIBS			:=	$(BASEDIR)/lib
 
 #---------------------------------------------------------------------------------
 else
 #---------------------------------------------------------------------------------
+
+export LIBDIR		:= $(LIBS)/$(PLATFORM)
+export DEPSDIR		:=	$(DEPS)/$(PLATFORM)
 
 #---------------------------------------------------------------------------------
 endif
@@ -50,10 +58,9 @@ libspu_sound.a: $(SPUSOUNDLIB)
 #---------------------------------------------------------------------------------
 install: libspu_sound.a
 #---------------------------------------------------------------------------------
-	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  $(notdir $@)"
 	@cp -f  libspu_sound.a $(PORTLIBS)/lib/
-	@cp -f  spu_soundlib.h $(PORTLIBS)/include/soundlib
+	@cp -f  spu_soundlib.h $(PORTLIBS)/include/
 	@rm -f *.d
 	@rm -f $(SPUSOUNDLIB)
 	@rm -f *.a

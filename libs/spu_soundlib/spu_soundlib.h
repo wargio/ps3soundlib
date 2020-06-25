@@ -21,14 +21,16 @@
 #define SPU_SNDLIB_H
 
 #include <ppu-lv2.h>
-#include <ppu-types.h>
-#include <unistd.h>
 #include <sys/spu.h>
-#include <sys/process.h>
+#include <lv2/spu.h>
+
+#include <lv2/process.h>
 #include <sys/thread.h>
+#include <sys/systime.h>
+#include <sys/sem.h>
 #include <sysmodule/sysmodule.h>
 
-//#include <sys/event_queue.h>
+#include <sysutil/sysutil.h>
 
 #include <audio/audio.h>
 

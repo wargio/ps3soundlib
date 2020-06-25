@@ -16,7 +16,7 @@
 
 */
 
-#include <sys/sem.h>
+
 #include "audioplayer.h"
 
 #include <vorbis/vorbisfile.h>
@@ -602,7 +602,7 @@ int DecodeAudio(void *audiofile, int size, short *samples, int *size_samples, in
             || mpg123_replace_reader(private_audio.mh, mp3_read, mp3_lseek) != MPG123_OK
             || mpg123_open_fd(private_audio.mh, (int) (long) private_audio.fd) != MPG123_OK
             //|| mpg123_open(private_audio.mh, name) != MPG123_OK 
-            || mpg123_getformat(private_audio.mh, (long int*)&private_audio.rate, &private_audio.channels, &private_audio.encoding) != MPG123_OK) {
+            || mpg123_getformat(private_audio.mh, (void *) &private_audio.rate, &private_audio.channels, &private_audio.encoding) != MPG123_OK) {
                 
                 mpg123_close(private_audio.mh);
                 mpg123_delete(private_audio.mh);
@@ -797,7 +797,7 @@ int PlayAudiofd(FILE * fd, int time_pos, int mode)
             if (private_audio.err != MPG123_OK || (private_audio.mh = mpg123_new(NULL, &private_audio.err)) == NULL
                 || mpg123_replace_reader(private_audio.mh, mp3_read, mp3_lseek) != MPG123_OK
                 || mpg123_open_fd(private_audio.mh, (int) (long) private_audio.fd) != MPG123_OK
-                || mpg123_getformat(private_audio.mh, (long int*)&private_audio.rate, &private_audio.channels, &private_audio.encoding) != MPG123_OK) {
+                || mpg123_getformat(private_audio.mh, (void *) &private_audio.rate, &private_audio.channels, &private_audio.encoding) != MPG123_OK) {
                     
                     mpg123_close(private_audio.mh);
                     mpg123_delete(private_audio.mh);
@@ -839,7 +839,7 @@ int PlayAudiofd(FILE * fd, int time_pos, int mode)
 
     sysSemCreate(&audioplayer_semaid, &audioplayer_sema_attr, 0, 1);
 
-    if (sysThreadCreate(&h_audioplayer, (void *)audio_player_thread, (void *)&private_audio, PLAYER_PRIORITY, STACKSIZE,
+    if (sysThreadCreate(&h_audioplayer, (void *) audio_player_thread, (void *) &private_audio, PLAYER_PRIORITY, STACKSIZE,
         THREAD_JOINABLE, "Audioplayer") < 0) {
 
         audio_thread_running = -1;
