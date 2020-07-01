@@ -1,5 +1,5 @@
 /* 
-    Copyright (C) 1985, 2010  Francisco Muñoz "Hermes" <www.elotrolado.net>
+    Copyright (C) 1985, 2010  Francisco Muoz "Hermes" <www.elotrolado.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -31,30 +31,30 @@ void init_tabsenofunc()
     int n;
 
 
-	for(n = 0; n < 16384; n++) 
-		tablaseno[n] = (int) ((double) FLOAT_FIX * sin((PID * (float) n) / 16384.0));
-	
+    for(n = 0; n < 16384; n++) 
+        tablaseno[n] = (int) ((double) FLOAT_FIX * sin((PID * (float) n) / 16384.0));
+    
 
-	for(n=0;n<16384;n++) 
-		tablacoseno[n] = (int) ((double) FLOAT_FIX * cos((PID * (float) n) / 16384.0));	
+    for(n=0;n<16384;n++) 
+        tablacoseno[n] = (int) ((double) FLOAT_FIX * cos((PID * (float) n) / 16384.0)); 
 }
 
 int sin_int(int ang)  // fast sin (ang=16384= 360 degrees)
 {
-	int n = ang;
+    int n = ang;
 
-	if( n < 0) n = 16384 - n;
-	n &= 16383;
+    if( n < 0) n = 16384 - n;
+    n &= 16383;
 
     return(tablaseno[n]);
 }
 
 int cosin_int(int ang)
 {
-	int n=ang;
+    int n=ang;
 
-	if(n < 0) n = 16384 - n;
-	n &= 16383;
+    if(n < 0) n = 16384 - n;
+    n &= 16383;
 
     return(tablacoseno[n]);
 }

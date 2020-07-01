@@ -1,5 +1,5 @@
 /* 
-    Copyright (C) 1985, 2010  Francisco Muñoz "Hermes" <www.elotrolado.net>
+    Copyright (C) 1985, 2010  Francisco Muoz "Hermes" <www.elotrolado.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
