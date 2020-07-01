@@ -30,16 +30,19 @@ CONTENTID	:=	UP0001-$(APPID)_00-0000000000000000
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS		=	-Os -Wall -mcpu=cell $(MACHDEP) $(INCLUDE) --std=gnu99 -I$(PS3DEV)/portlibs/modules/include
+CFLAGS		=	-Os -Wall -mcpu=cell $(MACHDEP) $(INCLUDE) --std=gnu99 \
+				-I$(PS3DEV)/portlibs/modules/include
 CXXFLAGS	=	$(CFLAGS)
 
-LDFLAGS		=	$(MACHDEP) -Wl,-Map,$(notdir $@).map
+LDFLAGS		=	$(MACHDEP) -Wl,-Map,$(notdir $@).map \
+				-L$(PS3DEV)/portlibs/modules/lib/
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
 #---------------------------------------------------------------------------------
-LIBS	:=	-lfont -ltiny3d -lgcm_sys -lrsx -lsysutil -lio -lsysmodule -laudioplayer -lmpg123 -logg \
-		-lspu_sound -laudio -lm -lsysfs -I$(PS3DEV)/portlibs/modules/lib/spu_soundmodule.bin.a
+LIBS	:=	-lfont -ltiny3d -lgcm_sys -lrsx -lsysutil -lio -lsysmodule \
+			-laudioplayer -lmpg123 -logg -lspu_sound -laudio -lm -lsysfs \
+			-lspu_soundmodule
 
 #---------------------------------------------------------------------------------
 # list of directories containing libraries, this must be the top level containing
@@ -88,37 +91,31 @@ else
 endif
 
 export OFILES	:=	$(addsuffix .o,$(BINFILES)) \
-			$(addsuffix .o,$(VPOFILES)) \
-			$(addsuffix .o,$(FPOFILES)) \
-			$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
-			$(sFILES:.s=.o) $(SFILES:.S=.o)
+						$(addsuffix .o,$(VPOFILES)) \
+						$(addsuffix .o,$(FPOFILES)) \
+						$(CPPFILES:.cpp=.o) $(CFILES:.c=.o) \
+						$(sFILES:.s=.o) $(SFILES:.S=.o)
 
 #---------------------------------------------------------------------------------
 # build a list of include paths
 #---------------------------------------------------------------------------------
 export INCLUDE	:=	$(foreach dir,$(INCLUDES), -I$(CURDIR)/$(dir)) \
-					$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
-					$(LIBPSL1GHT_INC) \
-					-I$(CURDIR)/$(BUILD) 
+						$(foreach dir,$(LIBDIRS),-I$(dir)/include) \
+						$(LIBPSL1GHT_INC) -I$(CURDIR)/$(BUILD) 
 
 #---------------------------------------------------------------------------------
 # build a list of library paths
 #---------------------------------------------------------------------------------
-export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) \
-					$(LIBPSL1GHT_LIB)
+export LIBPATHS	:=	$(foreach dir,$(LIBDIRS),-L$(dir)/lib) $(LIBPSL1GHT_LIB)
 
 export OUTPUT	:=	$(CURDIR)/$(TARGET)
 .PHONY: $(BUILD) clean
 
 #---------------------------------------------------------------------------------
 $(BUILD):
-	@[ -f $(PS3DEV)/portlibs/modules/spu_soundmodule.bin ] || { \
-		echo $(PS3DEV)/portlibs/modules/spu_soundmodule.bin "doesn't exist\n" \
-		     "Please, build first ps3soundlib, then try again" ; exit 1 ; }
 	@[ -f $(PORTLIBS)/lib/libtiny3d.a ] || { \
 		echo $(PORTLIBS)/lib/libtiny3d.a "doesn't exist\n" \
 		     "Please, build first tiny3d, then try again" ; exit 1 ; }
-	@cp $(PS3DEV)/portlibs/modules/spu_soundmodule.bin $(CURDIR)/$(DATA)
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 

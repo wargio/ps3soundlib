@@ -49,7 +49,7 @@
 //#define FROM_FILE
 
 #ifndef FROM_FILE
-#include "spu_soundmodule_bin.h" // load SPU Module
+#include <spu_soundmodule_bin.h> // load SPU Module
 #else
 void * spu_soundmodule_bin = NULL;
 #endif
