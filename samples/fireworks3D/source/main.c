@@ -504,7 +504,7 @@ void demo()
             else
                 SetFontColor(0xcfcfcfff, 0x00000000);
 
-            text_y = 132 + (8 * fast_sin((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
+            text_y = 132 + (8 * fast_sine((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
 
             text_x = DrawFormatString(text_x, text_y, "%c", string1[n]);
         }
@@ -533,7 +533,7 @@ void demo()
                 break;
             }
 
-            text_y = 280 + (8 * fast_sin((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
+            text_y = 280 + (8 * fast_sine((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
 
             text_x = DrawFormatString(text_x, text_y, "%c", hermes_str[n]);
         }
@@ -563,7 +563,7 @@ void demo()
 
             for (n = 0; n < strlen(string1); n++) {
 
-                text_y = 430 + (2 * fast_sin((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
+                text_y = 430 + (2 * fast_sine((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
 
                 text_x = DrawFormatString(text_x, text_y, "%c", string1[n]);
             }
