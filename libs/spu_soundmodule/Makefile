@@ -12,7 +12,6 @@ AS			:=	$(PREFIX)gcc
 CC			:=	$(PREFIX)gcc
 CXX			:=	$(PREFIX)g++
 STRIP		:=	$(PREFIX)strip
-RAW2H		:=	$(PS3DEV)/bin/raw2h
 
 ifeq ($(findstring $(PREFIX),$(LD)),)
 LD			:=	$(CC)
@@ -48,10 +47,6 @@ DEPSOPTIONS	=	-MMD -MP -MF $(DEPSDIR)/$*.d
 
 ########################################################
 
-CFLAGS		:= -g
-CXXFLAGS	:= $(CFLAGS)
-LDFLAGS		:= 
-
 TARGET		:=	$(notdir $(CURDIR))
 BUILD		:=	build
 SOURCE		:=	source
@@ -59,7 +54,7 @@ INCLUDE		:=	include
 DATA		:=	data
 LIBS		:=	-lc
 
-PORTLIBS    := $(PS3DEV)/portlibs/ppu
+PORTLIBS	:=	$(PS3DEV)/portlibs/ppu
 
 CFLAGS		:=	-g -O2 -Wall --std=gnu99
 CXXFLAGS	:=	-g -O2 -Wall
@@ -73,10 +68,10 @@ export VPATH	:=	$(foreach dir,$(SOURCE),$(CURDIR)/$(dir)) \
 export BUILDDIR	:=	$(CURDIR)/$(BUILD)
 export DEPSDIR	:=	$(BUILDDIR)
 
-CFILES		:= $(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.c)))
-CXXFILES	:= $(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.cpp)))
-SFILES		:= $(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.S)))
-BINFILES	:= $(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.bin)))
+CFILES			:=	$(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.c)))
+CXXFILES		:=	$(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.cpp)))
+SFILES			:=	$(foreach dir,$(SOURCE),$(notdir $(wildcard $(dir)/*.S)))
+BINFILES		:=	$(foreach dir,$(DATA),$(notdir $(wildcard $(dir)/*.bin)))
 
 export OFILES	:=	$(CFILES:.c=.o) \
 					$(CXXFILES:.cpp=.o) \
@@ -93,7 +88,7 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	@[ -d lib ] || mkdir -p lib
-	@raw2h$(POSTFIX) $(TARGET).elf lib/$(TARGET).bin.h lib/$(TARGET).S $(TARGET)_bin
+	@$(RAW2H) $(POSTFIX) $(TARGET).elf lib/$(TARGET).bin.h lib/$(TARGET).S $(TARGET)_bin
 	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
 	@ppu-ar -rcs $(TARGET).bin.a lib/$(TARGET).o
 
