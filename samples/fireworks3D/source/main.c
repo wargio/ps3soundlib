@@ -44,7 +44,7 @@
 
 #include "sincos.h"
 
-#include <spu_soundmodule_bin.h> // load SPU Module
+#include "spu_soundmodule_bin.h" // load SPU Module
 
 #include "spu_soundlib.h"
 #include "audioplayer.h"

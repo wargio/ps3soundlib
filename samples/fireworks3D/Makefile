@@ -31,11 +31,12 @@ CONTENTID	:=	UP0001-$(APPID)_00-0000000000000000
 #---------------------------------------------------------------------------------
 
 CFLAGS		=	-Os -Wall -mcpu=cell $(MACHDEP) $(INCLUDE) --std=gnu99 \
-				-I$(PS3DEV)/portlibs/ppu/modules/include
+				-I$(PORTLIBS)/modules/include
+
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS		=	$(MACHDEP) -Wl,-Map,$(notdir $@).map \
-				-L$(PS3DEV)/portlibs/ppu/modules/lib/
+				-L$(PORTLIBS)/modules/lib/
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
@@ -113,9 +114,13 @@ export OUTPUT	:=	$(CURDIR)/$(TARGET)
 
 #---------------------------------------------------------------------------------
 $(BUILD):
+	@[ -f $(PORTLIBS)/modules/spu_soundmodule.bin ] || { \
+		echo $(PORTLIBS)/modules/spu_soundmodule.bin "doesn't exist\n" \
+		     "Please, build first ps3soundlib, then try again" ; exit 1 ; }
 	@[ -f $(PORTLIBS)/lib/libtiny3d.a ] || { \
 		echo $(PORTLIBS)/lib/libtiny3d.a "doesn't exist\n" \
 		     "Please, build first tiny3d, then try again" ; exit 1 ; }
+	@cp $(PORTLIBS)/modules/spu_soundmodule.bin $(CURDIR)/$(DATA)
 	@[ -d $@ ] || mkdir -p $@
 	@$(MAKE) --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 
