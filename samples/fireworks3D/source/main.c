@@ -74,7 +74,7 @@ static u32 inited;
 #define INITED_SOUNDLIB 4
 #define INITED_AUDIOPLAYER 8
 
-void release_all()
+static void release_all()
 {
 
     if (inited & INITED_CALLBACK)
@@ -329,7 +329,7 @@ void demo()
 
                                 if (strstr(entry.d_name, ".mp3") || strstr(entry.d_name, ".ogg")) {
 
-                                    sprintf(filename, "/dev_usb/audio/%s", (char*)entry.d_name);
+                                    snprintf(filename, sizeof(filename), "/dev_usb/audio/%s", (char*)entry.d_name);
 
                                     // playing Audio from USB (it stops previous Ogg/MP3)
                                     if (PlayAudio(filename, 0, AUDIO_ONE_TIME) == 0)

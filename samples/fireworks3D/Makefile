@@ -30,7 +30,7 @@ CONTENTID	:=	UP0001-$(APPID)_00-0000000000000000
 # options for code generation
 #---------------------------------------------------------------------------------
 
-CFLAGS		=	-Os -Wall -mcpu=cell $(MACHDEP) $(INCLUDE) --std=gnu99 \
+CFLAGS		=	-O2 -Wall -mcpu=cell $(MACHDEP) $(INCLUDE) --std=gnu99 \
 				-I$(PORTLIBS)/modules/include
 
 CXXFLAGS	=	$(CFLAGS)
