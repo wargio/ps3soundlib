@@ -1,3 +1,7 @@
 *.o
+*.d
 *.a
 *~
+*.elf
+spu_soundmodule.bin.h
+spu_soundmodule.S
