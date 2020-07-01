@@ -67,7 +67,7 @@ padData paddata;
 
 typedef s32 sysFsFile;
 
-u32 inited;
+static u32 inited;
 
 #define INITED_CALLBACK 1
 #define INITED_SPU 2
@@ -243,10 +243,6 @@ void demo()
     if (PlayAudiofd(fp, 0, AUDIO_INFINITE_TIME) == 0)
         inited |= INITED_AUDIOPLAYER;
 
-    // initializes the sin /cos int table
-
-    init_fast_sine_cosine();
-
     // fix random sequence
 
     srand(1);
@@ -259,15 +255,15 @@ void demo()
 
     for (n = 0; n < 256; n++) {
 
-        int ang = rand() & 16383;
+        int ang = rand() % 360;
 
         stars[n][0] = (rand() % (848 + 128)) - 128;
         stars[n][1] = (rand() % 512);
 
         f = ((float)((1 + (rand() & 255)) * 2)) / 128.0f;
 
-        particles_d[n].dx = f * ((float)(sin_int((ang)&16383)) / 16384.0f);
-        particles_d[n].dy = f * ((float)(cosin_int((ang)&16383)) / 16384.0f);
+        particles_d[n].dx = f * ((fast_sine(ang)) / 16384.0f);
+        particles_d[n].dy = f * ((fast_cosine(ang)) / 16384.0f);
     }
 
     SetFontSize(16, 32);

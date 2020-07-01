@@ -19,9 +19,7 @@
 #ifndef SINCOS_H
 #define SINCOS_H
 
-void init_fast_sine_cosine();
-
-int sin_int   (int ang);
-int cosin_int (int ang);
+float fast_sine(float x);
+float fast_cosine(float x);
 
 #endif

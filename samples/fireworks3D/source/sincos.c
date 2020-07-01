@@ -18,43 +18,19 @@
 
 #include "sincos.h"
 
-#include <math.h>
+const float PI = 3.14159265358f;
+const float B = 4.0f / PI;
+const float C = -4.0f / (PI * PI);
+const float P = 0.225f;
 
-static int sine_table[16384];
-static int cosine_table[16384];
-
-#define FLOAT_FIX (16384)
-#define PID 6.283185307179586476925286766559
-
-void init_fast_sine_cosine() {
-	volatile int n;
-
-	for (n = 0; n < 16384; n++) {
-		sine_table[n] = (int)((double)FLOAT_FIX * sin((PID * (float)n) / 16384.0));
-	}
-
-	for (n = 0; n < 16384; n++) {
-		cosine_table[n] = (int)((double)FLOAT_FIX * cos((PID * (float)n) / 16384.0));
-	}
+float fast_sine(float x) {
+    float y = B * x + C * x * (x < 0 ? -x : x);
+    return P * (y * (y < 0 ? -y : y) - y) + y;
 }
 
-// fast sin (ang=16384= 360 degrees)
-int sin_int(int ang) {
-	int n = ang;
-
-	if (n < 0)
-		n = 16384 - n;
-	n &= 16383;
-
-	return (sine_table[n]);
-}
-
-int cosin_int(int ang) {
-	int n = ang;
-
-	if (n < 0)
-		n = 16384 - n;
-	n &= 16383;
-
-	return (cosine_table[n]);
+// x range: [-PI, PI]
+float fast_cosine(float x) {
+    x = (x > 0) ? -x : x;
+    x += PI/2;
+    return fast_sine(x);
 }
