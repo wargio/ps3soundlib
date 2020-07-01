@@ -95,9 +95,10 @@ $(BUILD):
 
 install: $(BUILD) 
 	@[ -d $(PORTLIBS)/modules ] || mkdir -p $(PORTLIBS)/modules
-	@cp -v -f lib/*.h $(PORTLIBS)/modules
-	@cp -v -f lib/../*.a $(PORTLIBS)/modules
-	@cp -v -f $(TARGET).elf $(PORTLIBS)/modules/$(TARGET).bin
+	@[ -d $(PORTLIBS)/modules/include ] || mkdir -p $(PORTLIBS)/modules/include
+	@[ -d $(PORTLIBS)/modules/lib ] || mkdir -p $(PORTLIBS)/modules/lib
+	@cp -v -f lib/*.h $(PORTLIBS)/modules/include
+	@cp -v -f lib/../*.a $(PORTLIBS)/modules/lib
 
 clean:
 	@echo Clean...
