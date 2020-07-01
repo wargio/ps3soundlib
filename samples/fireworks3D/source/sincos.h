@@ -1,5 +1,5 @@
 /* 
-    Copyright (C) 1985, 2010  Francisco Muñoz "Hermes" <www.elotrolado.net>
+    Copyright (C) 1985, 2010  Francisco Muoz "Hermes" <www.elotrolado.net>
 
     This program is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -19,7 +19,9 @@
 #ifndef SINCOS_H
 #define SINCOS_H
 
-float fast_sine(float x);
-float fast_cosine(float x);
+void init_tabsenofunc();
+
+int sin_int   (int ang);
+int cosin_int (int ang);
 
 #endif

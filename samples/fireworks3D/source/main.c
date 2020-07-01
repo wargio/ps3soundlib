@@ -243,8 +243,10 @@ void demo()
     if (PlayAudiofd(fp, 0, AUDIO_INFINITE_TIME) == 0)
         inited |= INITED_AUDIOPLAYER;
 
-    // fix random sequence
+    // initializes the sin /cos int table
+    init_tabsenofunc();
 
+    // fix random sequence
     srand(1);
 
     // fireworks init
