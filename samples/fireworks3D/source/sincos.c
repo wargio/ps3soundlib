@@ -26,21 +26,21 @@ static int tablacoseno[16384];
 #define  FLOAT_FIX (16384)
 #define  PID 6.283185307179586476925286766559
 
-void init_tabsenofunc()
-{
+void init_tabsenofunc() {
     int n;
 
-
-	for(n = 0; n < 16384; n++) 
+	for(n = 0; n < 16384; n++) {
 		tablaseno[n] = (int) ((double) FLOAT_FIX * sin((PID * (float) n) / 16384.0));
+    }
 	
 
-	for(n=0;n<16384;n++) 
+	for(n=0;n<16384;n++) {
 		tablacoseno[n] = (int) ((double) FLOAT_FIX * cos((PID * (float) n) / 16384.0));	
+    }
 }
 
-int sin_int(int ang)  // fast sin (ang=16384= 360 degrees)
-{
+// fast sin (ang=16384= 360 degrees)
+int sin_int(int ang)  {
 	int n = ang;
 
 	if( n < 0) n = 16384 - n;
@@ -49,8 +49,7 @@ int sin_int(int ang)  // fast sin (ang=16384= 360 degrees)
     return(tablaseno[n]);
 }
 
-int cosin_int(int ang)
-{
+int cosin_int(int ang) {
 	int n=ang;
 
 	if(n < 0) n = 16384 - n;
