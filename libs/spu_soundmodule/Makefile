@@ -89,9 +89,9 @@ $(BUILD):
 	@[ -d $@ ] || mkdir -p $@
 	@make --no-print-directory -C $(BUILD) -f $(CURDIR)/Makefile
 	@[ -d lib ] || mkdir -p lib
-	@$(RAW2H) $(POSTFIX) $(TARGET).elf lib/$(TARGET).bin.h lib/$(TARGET).S $(TARGET)_bin
+	@$(RAW2H) $(POSTFIX) $(TARGET).elf lib/$(TARGET)_bin.h lib/$(TARGET).S $(TARGET)_bin
 	@ppu-as -mcell lib/$(TARGET).S -o lib/$(TARGET).o
-	@ppu-ar -rcs $(TARGET).bin.a lib/$(TARGET).o
+	@ppu-ar -rcs lib$(TARGET).a lib/$(TARGET).o
 
 install: $(BUILD) 
 	@[ -d $(PORTLIBS)/modules ] || mkdir -p $(PORTLIBS)/modules
