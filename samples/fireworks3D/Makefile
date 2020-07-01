@@ -31,11 +31,11 @@ CONTENTID	:=	UP0001-$(APPID)_00-0000000000000000
 #---------------------------------------------------------------------------------
 
 CFLAGS		=	-Os -Wall -mcpu=cell $(MACHDEP) $(INCLUDE) --std=gnu99 \
-				-I$(PS3DEV)/portlibs/modules/include
+				-I$(PS3DEV)/portlibs/ppu/modules/include
 CXXFLAGS	=	$(CFLAGS)
 
 LDFLAGS		=	$(MACHDEP) -Wl,-Map,$(notdir $@).map \
-				-L$(PS3DEV)/portlibs/modules/lib/
+				-L$(PS3DEV)/portlibs/ppu/modules/lib/
 
 #---------------------------------------------------------------------------------
 # any extra libraries we wish to link with the project
