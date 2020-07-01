@@ -18,10 +18,11 @@
 
 #include "sincos.h"
 
-const float PI = 3.14159265358f;
-const float B = 4.0f / PI;
-const float C = -4.0f / (PI * PI);
-const float P = 0.225f;
+const float PI  = 3.14159265358f;
+const float PIH = 1.57079632679; // PI / 2
+const float B   = 12.56637061432; // 4.0f * PI
+const float C   = -0.4052847345718778; // -4.0f / (PI * PI)
+const float P   = 0.225f;
 
 float fast_sine(float x) {
     float y = B * x + C * x * (x < 0 ? -x : x);
@@ -31,6 +32,6 @@ float fast_sine(float x) {
 // x range: [-PI, PI]
 float fast_cosine(float x) {
     x = (x > 0) ? -x : x;
-    x += PI/2;
+    x += PIH;
     return fast_sine(x);
 }
