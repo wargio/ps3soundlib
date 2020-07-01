@@ -12,6 +12,7 @@ AS			:=	$(PREFIX)gcc
 CC			:=	$(PREFIX)gcc
 CXX			:=	$(PREFIX)g++
 STRIP		:=	$(PREFIX)strip
+RAW2H		:=	$(PS3DEV)/bin/raw2h
 
 ifeq ($(findstring $(PREFIX),$(LD)),)
 LD			:=	$(CC)
