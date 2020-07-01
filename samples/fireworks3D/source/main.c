@@ -1,18 +1,19 @@
 /* 
- * Copyright (C) 1985, 2010  Francisco Mu?z "Hermes" <www.elotrolado.net>
- * 
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- * 
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * 
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+    Copyright (C) 1985, 2010  Francisco Muoz "Hermes" <www.elotrolado.net>
+
+    This program is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 */
 
 #include <ppu-lv2.h>
@@ -67,14 +68,14 @@ padData paddata;
 
 typedef s32 sysFsFile;
 
-static u32 inited;
+u32 inited;
 
 #define INITED_CALLBACK 1
 #define INITED_SPU 2
 #define INITED_SOUNDLIB 4
 #define INITED_AUDIOPLAYER 8
 
-static void release_all()
+void release_all()
 {
 
     if (inited & INITED_CALLBACK)
@@ -139,7 +140,7 @@ void snd_explo(int voice, int pos)
     }
 }
 
-char filename[1024];
+char filename[2048];
 
 void demo()
 {
@@ -213,9 +214,9 @@ void demo()
 
     DecodeAudio((void*)sound_ogg_bin, sound_ogg_bin_size, explosion, &explosion_size, &explosion_freq, &explosion_is_stereo);
 
-    /* NOTE here "explosion" can be unaligned to the SPU dma and i don?t adjust the buffer
-		i asume "explosion_size" is sufficient and not expensive with memory
-	*/
+    /* NOTE here "explosion" can be unaligned to the SPU dma and i don�t adjust the buffer
+        i asume "explosion_size" is sufficient and not expensive with memory
+    */
 
     /******************************************************************/
     /* IMPORTANT!!!: You must call SND_Pause(0) before to use voices. */
@@ -230,11 +231,11 @@ void demo()
     //s_printf("Playing MP3\n");
 
     /* 
-	open as memory device the 2003.mp3 sample. It return 0x666 to 0x669 value and i use it to switch internally the device used.
+    open as memory device the 2003.mp3 sample. It return 0x666 to 0x669 value and i use it to switch internally the device used.
 
-	PlayAudio functions and StopAudio() closes the device calling internally to mem_close()
+    PlayAudio functions and StopAudio() closes the device calling internally to mem_close()
 
-	*/
+    */
 
     FILE* fp = (FILE*)mem_open((void*)m2003_mp3_bin, m2003_mp3_bin_size);
 
@@ -244,9 +245,11 @@ void demo()
         inited |= INITED_AUDIOPLAYER;
 
     // initializes the sin /cos int table
+
     init_tabsenofunc();
 
     // fix random sequence
+
     srand(1);
 
     // fireworks init
@@ -257,15 +260,15 @@ void demo()
 
     for (n = 0; n < 256; n++) {
 
-        int ang = rand() % 360;
+        int ang = rand() & 16383;
 
         stars[n][0] = (rand() % (848 + 128)) - 128;
         stars[n][1] = (rand() % 512);
 
         f = ((float)((1 + (rand() & 255)) * 2)) / 128.0f;
 
-        particles_d[n].dx = f * ((fast_sine(ang)) / 16384.0f);
-        particles_d[n].dy = f * ((fast_cosine(ang)) / 16384.0f);
+        particles_d[n].dx = f * ((float)(sin_int((ang)&16383)) / 16384.0f);
+        particles_d[n].dy = f * ((float)(cosin_int((ang)&16383)) / 16384.0f);
     }
 
     SetFontSize(16, 32);
@@ -506,7 +509,7 @@ void demo()
             else
                 SetFontColor(0xcfcfcfff, 0x00000000);
 
-            text_y = 132 + (8 * fast_sine((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
+            text_y = 132 + (8 * sin_int((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
 
             text_x = DrawFormatString(text_x, text_y, "%c", string1[n]);
         }
@@ -535,7 +538,7 @@ void demo()
                 break;
             }
 
-            text_y = 280 + (8 * fast_sine((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
+            text_y = 280 + (8 * sin_int((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
 
             text_x = DrawFormatString(text_x, text_y, "%c", hermes_str[n]);
         }
@@ -565,7 +568,7 @@ void demo()
 
             for (n = 0; n < strlen(string1); n++) {
 
-                text_y = 430 + (2 * fast_sine((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
+                text_y = 430 + (2 * sin_int((((n + ((frame >> 2) & 15)) * 2048)) & 16383)) / 16384;
 
                 text_x = DrawFormatString(text_x, text_y, "%c", string1[n]);
             }
