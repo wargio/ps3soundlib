@@ -3,7 +3,7 @@ PS3 SOUNDLIB
 
 PS3 SOUNDLIB is a set of libraries to play PCM voices, MP3 and OGG files, using one SPU.
 
-**NOTE:** this repository is update to the last compilers and PSL1GHT libraries..
+**NOTE:** this repository is update to the last compilers and PSL1GHT libraries.
 
 **NOTE:** this lib needs tiny3D
 
