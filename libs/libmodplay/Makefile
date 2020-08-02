@@ -56,10 +56,11 @@ libmod.a: $(SOUNDMODLIB)
 #---------------------------------------------------------------------------------
 install: libmod.a
 #---------------------------------------------------------------------------------
+	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  $(notdir $@)"
 	@cp -f  libmod.a $(PORTLIBS)/lib/
-	@cp -f  modplay.h $(PORTLIBS)/include/
-	@cp -f  gcmodplay.h $(PORTLIBS)/include/
+	@cp -f  modplay.h $(PORTLIBS)/include/soundlib
+	@cp -f  gcmodplay.h $(PORTLIBS)/include/soundlib
 	@rm -f *.d
 	@rm -f $(SOUNDMODLIB)
 	@rm -f *.a

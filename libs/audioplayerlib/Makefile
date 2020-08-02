@@ -69,12 +69,13 @@ liboggplayer.a: $(OGGPLAYERLIB)
 #---------------------------------------------------------------------------------
 install: libaudioplayer.a liboggplayer.a
 #---------------------------------------------------------------------------------
+	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  libaudioplayer.a"
 	@cp -f libaudioplayer.a $(PORTLIBS)/lib/
-	@cp -f audioplayer.h $(PORTLIBS)/include/
+	@cp -f audioplayer.h $(PORTLIBS)/include/soundlib
 	@echo "[CP]  liboggplayer.a"
 	@cp -f liboggplayer.a $(PORTLIBS)/lib/
-	@cp -f audioplayer.h $(PORTLIBS)/include/
+	@cp -f audioplayer.h $(PORTLIBS)/include/soundlib
 	@rm -f *.d .d
 	@rm -f $(OGGPLAYERLIB)
 	@rm -f audioplayer.o

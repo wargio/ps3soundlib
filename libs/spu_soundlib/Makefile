@@ -58,9 +58,10 @@ libspu_sound.a: $(SPUSOUNDLIB)
 #---------------------------------------------------------------------------------
 install: libspu_sound.a
 #---------------------------------------------------------------------------------
+	@[ -d $(PORTLIBS)/include/soundlib ] || mkdir -p $(PORTLIBS)/include/soundlib
 	@echo "[CP]  $(notdir $@)"
 	@cp -f  libspu_sound.a $(PORTLIBS)/lib/
-	@cp -f  spu_soundlib.h $(PORTLIBS)/include/
+	@cp -f  spu_soundlib.h $(PORTLIBS)/include/soundlib
 	@rm -f *.d
 	@rm -f $(SPUSOUNDLIB)
 	@rm -f *.a
